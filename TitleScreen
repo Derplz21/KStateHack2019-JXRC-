@@ -1,0 +1,26 @@
+import pygame
+
+win_h = 400
+win_w = 400
+screen = pygame.display.set_mode((win_w, win_h))
+green = (0, 255, 0)
+
+running = true
+
+def menu_control_keys(self):
+  key = pygame.key.get_pressed()
+  if key[pygame.K_b]:
+    pygame.quit()
+    sys.exit()
+    running = false
+
+class Button(pygame.sprite.Sprite):
+  def _init_(self,x,y):
+    self.color = green
+    self.image = pygame.Surface([20, 20])
+    self.image.fill(self.color)
+    self.rect = self.image.get_rect()
+    self.rect.x = x
+    self.rect.y = y
+
+  start_button = Button(50, 50)
