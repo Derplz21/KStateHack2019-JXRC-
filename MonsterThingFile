@@ -16,7 +16,9 @@ win_w = 600
 screen = pygame.display.set_mode((win_w, win_h))
 background = pygame.image.load('first_path.png')
 spaceimage1 = pygame.image.load('playspace1.png')
-pygame.display.set_caption('Lancer')
+imageProj = 'dagger1.png'
+slimeImage = 'slime.png'
+pygame.display.set_caption('MonsterThing')
 pygame.init()
 
 class Enemy1(pygame.sprite.Sprite):
@@ -93,6 +95,7 @@ class playerCharacter(pygame.sprite.Sprite):
     global show_menu
     global player_wins
     global enemy_wins
+    global slimeImage
     if key[pygame.K_s]:
       self.rect.y += dist
     elif key[pygame.K_w]:
@@ -105,6 +108,7 @@ class playerCharacter(pygame.sprite.Sprite):
     if self.rect.x < 375 and self.rect.x > 325 and self.rect.y < 475 and self.rect.y > 425:
       if key[pygame.K_f]:
         screen.fill((0,0,0))
+        slimeImage = 'slime.png'
         roaming = False
         running = True
         lancer1_alive = True
@@ -116,6 +120,7 @@ class playerCharacter(pygame.sprite.Sprite):
     if self.rect.x < 605 and self.rect.x > 555 and self.rect.y < 225 and self.rect.y > 175:
       if key[pygame.K_f]:
         screen.fill((0,0,0))
+        slimeImage = 'slimeOrange.png'
         roaming = False
         running = True
         lancer1_alive = True
@@ -127,6 +132,7 @@ class playerCharacter(pygame.sprite.Sprite):
     if self.rect.x < 525 and self.rect.x > 475 and self.rect.y < 325 and self.rect.y > 275:
       if key[pygame.K_f]:
         screen.fill((0,0,0))
+        slimeImage = 'slimePink.png'
         roaming = False
         running = True
         lancer1_alive = True
@@ -210,6 +216,8 @@ class Lancer1(pygame.sprite.Sprite):
                 self.rect.y = win_h - 10
 
             if key[pygame.K_LALT]:
+                global imageProj
+                imageProj = 'dagger1.png'
                 if self.ammo > 0:
                     current_time = pygame.time.get_ticks()
                     if current_time - self.last_shot > self.shoot_delay:
@@ -223,18 +231,34 @@ class Lancer1(pygame.sprite.Sprite):
 
 
 class EnemyBattle1(pygame.sprite.Sprite):
-    def __init__(self, height, width, image,):
+    def __init__(self, height, width, image):
         super().__init__()
         self.width = width
         self.height = height
         self.health = 100
         self.max_ammo = 10
         self.ammo = self.max_ammo
-        self.damage = 100
+        self.damage = 50
         self.image = pygame.image.load(image)
         self.rect = self.image.get_rect()
         self.rect.x = 400
-        self.rect.y = 100
+        self.rect.y = 400 // 2
+        self.reload_delay = 4000
+        self.shoot_delay = 400
+        self.last_shot = 0
+        self.last_movement = 0
+        self.move_delay = 20
+    def bossEnemy(self, height, width, image,):
+        self.width = width
+        self.height = height
+        self.health = 100
+        self.max_ammo = 10
+        self.ammo = self.max_ammo
+        self.damage = 50
+        self.image = pygame.image.load(image)
+        self.rect = self.image.get_rect()
+        self.rect.x = 400
+        self.rect.y = 400 // 2
         self.reload_delay = 4000
         self.shoot_delay = 400
         self.last_shot = 0
@@ -253,6 +277,8 @@ class EnemyBattle1(pygame.sprite.Sprite):
                self.ammo = 10
                
     def fire(self):
+        global imageProj
+        imageProj = 'slimeBall.png'
         if self.ammo > 0:
             current_time = pygame.time.get_ticks()
             if current_time - self.last_shot > self.shoot_delay:
@@ -302,9 +328,10 @@ class EnemyBattle1(pygame.sprite.Sprite):
             
 
 class Projectile(pygame.sprite.Sprite):
+    global imageProj
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('slimeBall.png')
+        self.image = pygame.image.load(imageProj)
         self.rect = self.image.get_rect()
 
     def draw(self, surface):
@@ -441,14 +468,15 @@ lancer1_list = pygame.sprite.Group()
 enemybattle_list = pygame.sprite.Group()
 cover_list = pygame.sprite.Group()
 def init_lancers():
+    global slimeImage
     lancer1_list.add(lancer1)
     lancer1.image = pygame.image.load('imageedit_1_7559225550.png')
     lancer1.rect.x = 0
     lancer1.rect.y = 400 // 2
     enemybattle_list.add(enemybattle1)
-    enemybattle1.image = pygame.image.load('slime.png')
+    enemybattle1.image = pygame.image.load(slimeImage)
     enemybattle1.rect.x = 400
-    enemybattle1.rect.y = 100
+    enemybattle1.rect.y = 400 // 2
     
     
 def init_cover():
@@ -541,6 +569,7 @@ def run():
     global enemybattle_list
     global lancer1_list
     global cover_list
+    global imageProj
     show_win_message = False
     while running:
         if show_menu == True:
