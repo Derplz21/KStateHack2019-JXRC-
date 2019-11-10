@@ -91,6 +91,8 @@ class playerCharacter(pygame.sprite.Sprite):
     global lancer1_alive
     global enemy_alive
     global show_menu
+    global player_wins
+    global enemy_wins
     if key[pygame.K_s]:
       self.rect.y += dist
     elif key[pygame.K_w]:
@@ -108,6 +110,8 @@ class playerCharacter(pygame.sprite.Sprite):
         lancer1_alive = True
         enemy_alive = True
         show_menu = True
+        player_wins = 0
+        enemy_wins = 0
         run()
     if self.rect.x < 605 and self.rect.x > 555 and self.rect.y < 225 and self.rect.y > 175:
       if key[pygame.K_f]:
@@ -117,6 +121,8 @@ class playerCharacter(pygame.sprite.Sprite):
         lancer1_alive = True
         enemy_alive = True
         show_menu = True
+        player_wins = 0
+        enemy_wins = 0
         run()
     if self.rect.x < 525 and self.rect.x > 475 and self.rect.y < 325 and self.rect.y > 275:
       if key[pygame.K_f]:
@@ -126,6 +132,8 @@ class playerCharacter(pygame.sprite.Sprite):
         lancer1_alive = True
         enemy_alive = True
         show_menu = True
+        player_wins = 0
+        enemy_wins = 0
         run()
     if self.rect.x < 225 and self.rect.x > 175 and self.rect.y < 145 and self.rect.y > 95:
       if key[pygame.K_f]:
@@ -135,6 +143,8 @@ class playerCharacter(pygame.sprite.Sprite):
         lancer1_alive = True
         enemy_alive = True
         show_menu = True
+        player_wins = 0
+        enemy_wins = 0
         run()
     if self.rect.x < 0:
       self.rect.x = 0
@@ -224,7 +234,7 @@ class EnemyBattle1(pygame.sprite.Sprite):
         self.image = pygame.image.load(image)
         self.rect = self.image.get_rect()
         self.rect.x = 400
-        self.rect.y = 400 // 2
+        self.rect.y = 100
         self.reload_delay = 4000
         self.shoot_delay = 400
         self.last_shot = 0
@@ -294,10 +304,8 @@ class EnemyBattle1(pygame.sprite.Sprite):
 class Projectile(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface([7, 5])
-        self.image.fill((255, 255, 255))
+        self.image = pygame.image.load('slimeBall.png')
         self.rect = self.image.get_rect()
-        
 
     def draw(self, surface):
        surface.blit(self.image, (self.rect.x, self.rect.y))
@@ -321,10 +329,11 @@ def draw_text(surface, text, size, x, y, color):
 def room0(x,y):
   screen.blit(spaceimage1, (x,y))
 roaming = False
-battles_done = False
 player_wins = 0
 enemy_wins = 0
 def win_counters():
+    global player_wins
+    global enemy_wins
     draw_text(screen, str(player_wins), 20, 280, 10, BLUE)
     draw_text(screen, str(enemy_wins), 20, 320, 10, BLUE)
 def ammo_counters():
@@ -337,7 +346,7 @@ def health_counters():
     
 
 def menu():
-    draw_text(screen, "PRESS [ENTER] TO BEGIN", 20, win_w/2, win_h/2, RED)
+    draw_text(screen, "Press [Enter] to Start Battle", 20, win_w/2, win_h/2, RED)
     pygame.display.update()
 
     while True:
@@ -363,6 +372,7 @@ def death_message():
             sys.exit()
 
 def win_message():
+    global winer
     draw_text(screen, winer + " has won the battle!", 20, win_w/2, win_h/2, RED)
     pygame.display.update()
     
@@ -381,6 +391,7 @@ def win_message():
                 enemy_alive = False
                 show_menu = False
                 roam()
+                break
         elif event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -437,7 +448,7 @@ def init_lancers():
     enemybattle_list.add(enemybattle1)
     enemybattle1.image = pygame.image.load('slime.png')
     enemybattle1.rect.x = 400
-    enemybattle1.rect.y = 400 // 2
+    enemybattle1.rect.y = 100
     
     
 def init_cover():
@@ -495,10 +506,10 @@ show_menu = False
 show_death_message = False
 show_win_message = False
 loser = 0
+winer = 0
 running = False
 def roam():
     global roaming
-    roaming = True
     while roaming:
       room0(0,0)
       character.draw(screen)
@@ -530,7 +541,7 @@ def run():
     global enemybattle_list
     global lancer1_list
     global cover_list
-    running = True
+    show_win_message = False
     while running:
         if show_menu == True:
             menu()
@@ -556,9 +567,9 @@ def run():
             enemybattle1.restart_ammo()
             lancer1.health = 100
             enemybattle1.health = 100
-            win_message()
             player_wins = 0
             enemy_wins = 0
+            win_message()
             show_win_message = False
             show_menu = True
             
@@ -584,8 +595,8 @@ def run():
                 if projectile.rect.x < 0 + 10:
                     projectile1.remove(projectile)
                 
-                enemy_hit_list = pygame.sprite.spritecollide(projectile, enemy_list, False)
-                for enemybattle1 in enemy_hit_list:
+                enemybattle_hit_list = pygame.sprite.spritecollide(projectile, enemybattle_list, False)
+                for enemybattle1 in enemybattle_hit_list:
                     enemybattle1.health -= lancer1.damage 
                     projectile1.remove(projectile)
                
@@ -641,6 +652,7 @@ def run():
         projectile2.draw(screen)
         cover_list.draw(screen)
         pygame.display.flip()
-   
+        pygame.event.clear()
+        
         clock.tick(60)
 titlePage()
