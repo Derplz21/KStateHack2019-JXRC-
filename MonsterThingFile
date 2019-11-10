@@ -1,0 +1,646 @@
+import pygame
+import random
+import sys
+import os
+if hasattr(sys, '_MEIPASS'):
+    font_path = os.path.join(sys._MEIPASS, "freesansbold.ttf")
+else:
+    font_path = 'freesansbold.ttf'
+
+GREEN = (0, 255, 0)    
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREY = (128, 117, 113)
+win_h = 600
+win_w = 600
+screen = pygame.display.set_mode((win_w, win_h))
+background = pygame.image.load('first_path.png')
+spaceimage1 = pygame.image.load('playspace1.png')
+pygame.display.set_caption('Lancer')
+pygame.init()
+
+class Enemy1(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([10, 10])
+    self.image.fill(RED)
+    self.rect = self.image.get_rect()
+    self.rect.x = 350
+    self.rect.y = 450
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy2(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([10, 10])
+    self.image.fill(RED)
+    self.rect = self.image.get_rect()
+    self.rect.x = 580
+    self.rect.y = 200
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy3(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([10, 10])
+    self.image.fill(RED)
+    self.rect = self.image.get_rect()
+    self.rect.x = 500
+    self.rect.y = 300
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy4(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([20, 20])
+    self.image.fill(RED)
+    self.rect = self.image.get_rect()
+    self.rect.x = 200
+    self.rect.y = 120
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class playerCharacter(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([20, 20])
+    self.image.fill(BLUE)
+    self.rect = self.image.get_rect()
+    self.rect.x = 400
+    self.rect.y = 550
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+  def movement_keys(self):
+    key = pygame.key.get_pressed()
+    dist = 2
+    global running
+    global roaming
+    global lancer1_alive
+    global enemy_alive
+    global show_menu
+    if key[pygame.K_s]:
+      self.rect.y += dist
+    elif key[pygame.K_w]:
+      self.rect.y -= dist
+    if key[pygame.K_d]:
+      self.rect.x += dist
+    elif key[pygame.K_a]:
+      self.rect.x -= dist
+
+    if self.rect.x < 375 and self.rect.x > 325 and self.rect.y < 475 and self.rect.y > 425:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+        roaming = False
+        running = True
+        lancer1_alive = True
+        enemy_alive = True
+        show_menu = True
+        run()
+    if self.rect.x < 605 and self.rect.x > 555 and self.rect.y < 225 and self.rect.y > 175:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+        roaming = False
+        running = True
+        lancer1_alive = True
+        enemy_alive = True
+        show_menu = True
+        run()
+    if self.rect.x < 525 and self.rect.x > 475 and self.rect.y < 325 and self.rect.y > 275:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+        roaming = False
+        running = True
+        lancer1_alive = True
+        enemy_alive = True
+        show_menu = True
+        run()
+    if self.rect.x < 225 and self.rect.x > 175 and self.rect.y < 145 and self.rect.y > 95:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+        roaming = False
+        running = True
+        lancer1_alive = True
+        enemy_alive = True
+        show_menu = True
+        run()
+    if self.rect.x < 0:
+      self.rect.x = 0
+    if self.rect.x > win_w - 20:
+      self.rect.x = win_w - 20
+    if self.rect.y < 0:
+      self.rect.y = 0
+    if self.rect.y > win_h - 20:
+      self.rect.y = win_h - 20
+
+class Lancer1(pygame.sprite.Sprite):
+    def __init__(self,width,height, ammo):
+        super().__init__()
+        self.width = width
+        self.height = height
+        self.health = 100
+        self.ammo = 5
+        self.max_ammo = 5
+        self.damage = 100
+        self.image = pygame.image.load('imageedit_1_7559225550.png')
+        self.image.convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 600 // 2
+        self.reload_delay = 1000
+        self.shoot_delay = 400
+        self.last_shot = 0
+        self.sound = pygame.mixer.Sound('Hackathon_project.wav')
+    def draw(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+    def restart_ammo(self):
+        if show_death_message == True:
+            self.ammo = 5
+    def play_sound(self):
+        self.sound.play()
+    def reload(self):
+        if self.ammo == 0:
+           current_time = pygame.time.get_ticks()
+           if current_time - self.last_shot > self.reload_delay:
+               self.last_shot = current_time
+               self.ammo = 5
+   
+    def handle_movement_keys(self):
+        if lancer1_alive == True:
+            key = pygame.key.get_pressed()
+            dist = 3
+            if key[pygame.K_s]: 
+                self.rect.y += dist 
+            elif key[pygame.K_w]:
+                self.rect.y -= dist 
+            if key[pygame.K_d]: 
+                self.rect.x += dist 
+            elif key[pygame.K_a]: 
+                self.rect.x -= dist 
+
+            if self.rect.x > win_w - 10:
+                self.rect.x = win_w - 10
+            if self.rect.x < 0:
+                self.rect.x = 0
+            if self.rect.y < 0:
+                self.rect.y = 0
+            if self.rect.y > win_h - 10:
+                self.rect.y = win_h - 10
+
+            if key[pygame.K_LALT]:
+                if self.ammo > 0:
+                    current_time = pygame.time.get_ticks()
+                    if current_time - self.last_shot > self.shoot_delay:
+                       self.last_shot = current_time
+                       projectile = Projectile()
+                       projectile.rect.x = self.rect.x
+                       projectile.rect.y = self.rect.y
+                       projectile1.add(projectile)
+                       self.ammo -= 1
+                      
+
+
+class EnemyBattle1(pygame.sprite.Sprite):
+    def __init__(self, height, width, image,):
+        super().__init__()
+        self.width = width
+        self.height = height
+        self.health = 100
+        self.max_ammo = 10
+        self.ammo = self.max_ammo
+        self.damage = 100
+        self.image = pygame.image.load(image)
+        self.rect = self.image.get_rect()
+        self.rect.x = 400
+        self.rect.y = 400 // 2
+        self.reload_delay = 4000
+        self.shoot_delay = 400
+        self.last_shot = 0
+        self.last_movement = 0
+        self.move_delay = 20
+    def draw(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+    def restart_ammo(self):
+        if show_death_message == True:
+            self.ammo = 10
+    def reload(self):
+        if self.ammo == 0:
+           current_time = pygame.time.get_ticks()
+           if current_time - self.last_shot > self.reload_delay:
+               self.last_shot = current_time
+               self.ammo = 10
+               
+    def fire(self):
+        if self.ammo > 0:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_shot > self.shoot_delay:
+                projectile = Projectile()
+                projectile.rect.x = self.rect.x
+                projectile.rect.y = self.rect.y
+                projectile2.add(projectile)
+                self.ammo -= 1
+
+    def pos_towards_player(self):
+        if lancer1.rect.y > self.rect.y:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_movement > self.move_delay:
+                self.last_movement = current_time
+                chance = random.randint(1, 3)
+                if chance == 1:
+                    self.rect.y += random.randint(1, 3)
+
+        if lancer1.rect.y < self.rect.y:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_movement > self.move_delay:
+                self.last_movement = current_time
+                chance = random.randint(1, 3)
+                if chance == 1:
+                    self.rect.y -= random.randint(1, 3)
+          
+            
+
+        if lancer1.rect.x > self.rect.x:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_movement > self.move_delay:
+                self.last_movement = current_time 
+                chance = random.randint(1, 3)
+                if chance == 1:
+                    self.rect.x += random.randint(1, 30)
+
+        if lancer1.rect.x < self.rect.x:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.last_movement > self.move_delay:
+                self.last_movement = current_time
+                chance = random.randint(1, 3)
+                if chance == 1:
+                    self.rect.x -= random.randint(1, 3)
+
+            
+   
+            
+
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface([7, 5])
+        self.image.fill((255, 255, 255))
+        self.rect = self.image.get_rect()
+        
+
+    def draw(self, surface):
+       surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Cover(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load('imageedit_1_3235525764.png')
+        self.rect = self.image.get_rect()
+    def draw(self):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+
+def draw_text(surface, text, size, x, y, color):
+    '''draw text to screen'''
+    font = pygame.font.Font(font_path, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surface.blit(text_surface, text_rect)
+
+def room0(x,y):
+  screen.blit(spaceimage1, (x,y))
+roaming = False
+battles_done = False
+player_wins = 0
+enemy_wins = 0
+def win_counters():
+    draw_text(screen, str(player_wins), 20, 280, 10, BLUE)
+    draw_text(screen, str(enemy_wins), 20, 320, 10, BLUE)
+def ammo_counters():
+    draw_text(screen, str(lancer1.ammo), 20, 10, 10, BLUE)
+    draw_text(screen, str(enemybattle1.ammo), 20, 580, 10, RED)
+
+def health_counters():
+    draw_text(screen, str(lancer1.health), 20, 15, 30, BLUE)
+    draw_text(screen, str(enemybattle1.health), 20, 580, 30, RED)
+    
+
+def menu():
+    draw_text(screen, "PRESS [ENTER] TO BEGIN", 20, win_w/2, win_h/2, RED)
+    pygame.display.update()
+
+    while True:
+        event = pygame.event.poll()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                break
+        elif event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+def death_message():
+    draw_text(screen,  loser + " was defeated", 20, win_w/2, win_h/2, RED)
+    pygame.display.update()
+    
+    while True:
+        event = pygame.event.poll()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                break
+        elif event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+def win_message():
+    draw_text(screen, winer + " has won the battle!", 20, win_w/2, win_h/2, RED)
+    pygame.display.update()
+    
+    while True:
+        global roaming
+        global running
+        global lancer1_alive
+        global enemy_alive
+        global show_menu
+        event = pygame.event.poll()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                roaming = True
+                running = False
+                lancer1_alive = False
+                enemy_alive = False
+                show_menu = False
+                roam()
+        elif event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+def titlePage():
+  draw_text(screen, "Monster Thing", 30, win_w/2, win_h/12, RED)
+  draw_text(screen, "Press B To Quit", 20, win_w/2, win_h/1.3, GREY)
+  draw_text(screen, "Press U To Start", 20, win_w/2, win_h/1.2, GREY)
+  pygame.display.update()
+  while True:
+    event = pygame.event.poll()
+    if event.type == pygame.KEYDOWN:
+      if event.key == pygame.K_b:
+        pygame.quit()
+        sys.ext()
+      if event.key == pygame.K_u:
+        global roaming
+        roaming = True
+        roam()
+      break
+    elif event.type == pygame.QUIT:
+      pygame.quit()
+      sys.exit()
+
+def main_menu():
+  event = pygame.event.poll()
+  if event.type == pygame.KEYDOWN:
+    if event.key == pygame.K_b:
+      pygame.quit()
+      sys.exit()
+  elif event.type == pygame.QUIT:
+    pygame.quit()
+    sys.exit()
+    
+character = playerCharacter(20, 20)
+enemy = Enemy1(10, 10)
+enemy2 = Enemy2(10, 10)
+enemy3 = Enemy3(10, 10)
+enemy4 = Enemy4(20, 20)
+enemy_list = pygame.sprite.Group()
+character_list = pygame.sprite.GroupSingle()        
+lancer1 = Lancer1(10, 10, 5)
+enemybattle1 = EnemyBattle1(10, 10,'slime.png')
+projectile1 = pygame.sprite.Group()
+projectile2 = pygame.sprite.Group()
+lancer1_list = pygame.sprite.Group()
+enemybattle_list = pygame.sprite.Group()
+cover_list = pygame.sprite.Group()
+def init_lancers():
+    lancer1_list.add(lancer1)
+    lancer1.image = pygame.image.load('imageedit_1_7559225550.png')
+    lancer1.rect.x = 0
+    lancer1.rect.y = 400 // 2
+    enemybattle_list.add(enemybattle1)
+    enemybattle1.image = pygame.image.load('slime.png')
+    enemybattle1.rect.x = 400
+    enemybattle1.rect.y = 400 // 2
+    
+    
+def init_cover():
+    for i in range(5):
+        cover = Cover()
+        cover.rect.x = random.randrange(win_w)
+        cover.rect.y = random.randrange(win_h)
+        cover_list.add(cover)
+
+def clear_screen():
+    for cover in cover_list:
+        cover.image.fill((0, 0, 0))
+        cover_list.remove(cover)
+    for projectile in projectile1:
+        projectile.image.fill((0, 0, 0))
+        projectile1.remove(projectile)
+    for projectile in projectile2:
+        projectile.image.fill((0, 0, 0))
+        projectile2.remove(projectile)
+    for lancer1 in lancer1_list:
+        lancer1.image.fill((0, 0, 0))
+        lancer1_list.remove(lancer1)
+    for enemybattle1 in enemybattle_list:
+        enemybattle1.image.fill((0, 0, 0))
+        enemybattle_list.remove(enemybattle1)
+    
+def init_character():
+  character_list.add(character)
+  character.image.fill(GREEN)
+  character.rect.x = 400
+  character.rect.y = 550
+
+def init_enemys():
+  enemy_list.add(enemy)
+  enemy.image.fill(RED)
+  enemy.rect.x = 350
+  enemy.rect.y = 450
+  enemy_list.add(enemy2)
+  enemy.image.fill(RED)
+  enemy.rect.x = 580
+  enemy.rect.y = 200
+  enemy_list.add(enemy3)
+  enemy.image.fill(RED)
+  enemy.rect.x = 500
+  enemy.rect.y = 300
+  enemy_list.add(enemy4)
+  enemy.image.fill(RED)
+  enemy.rect.x = 200
+  enemy.rect.y = 120
+  
+lancer1_alive = False
+enemy_alive = False
+clock = pygame.time.Clock()
+show_menu = False
+show_death_message = False
+show_win_message = False
+loser = 0
+running = False
+def roam():
+    global roaming
+    roaming = True
+    while roaming:
+      room0(0,0)
+      character.draw(screen)
+      character.movement_keys()
+      enemy.draw(screen)
+      enemy2.draw(screen)
+      enemy3.draw(screen)
+      enemy4.draw(screen)
+      main_menu()
+      pygame.display.flip()
+      pygame.event.clear()
+def run():
+    global running
+    global show_menu
+    global show_death_message
+    global show_win_message
+    global lancer1
+    global enemybattle1
+    global enemy_wins
+    global player_wins
+    global loser
+    global winer
+    global projectile1
+    global projectile2
+    global win_counters
+    global ammo_counters
+    global health_counter
+    global projectiles
+    global enemybattle_list
+    global lancer1_list
+    global cover_list
+    running = True
+    while running:
+        if show_menu == True:
+            menu()
+            init_lancers()
+            lancer1_alive = True
+            enemy_alive = True
+            init_cover()
+            show_menu = False
+   
+        if show_death_message == True:
+            clear_screen()
+            lancer1.restart_ammo()
+            enemybattle1.restart_ammo()
+            lancer1.health = 100
+            enemybattle1.health = 100
+            death_message()
+            show_death_message = False
+            show_menu = True
+            
+        if show_win_message == True:
+            clear_screen()
+            lancer1.restart_ammo()
+            enemybattle1.restart_ammo()
+            lancer1.health = 100
+            enemybattle1.health = 100
+            win_message()
+            player_wins = 0
+            enemy_wins = 0
+            show_win_message = False
+            show_menu = True
+            
+        for event in pygame.event.get():
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit() 
+                    running = False 
+
+    
+        for enemybattle1 in enemybattle_list:
+            enemybattle1.pos_towards_player()
+            if lancer1.rect.y == enemybattle1.rect.y:
+                enemybattle1.fire()
+            if lancer1.rect.y + 20 == enemybattle1.rect.y:
+                enemybattle1.fire()
+    
+
+        for projectile in projectile1:
+                if projectile.rect.x  < 600 and projectile.rect.x + 10 > 0:
+                    projectile.rect.x += 12
+                if projectile.rect.x < 0 + 10:
+                    projectile1.remove(projectile)
+                
+                enemy_hit_list = pygame.sprite.spritecollide(projectile, enemy_list, False)
+                for enemybattle1 in enemy_hit_list:
+                    enemybattle1.health -= lancer1.damage 
+                    projectile1.remove(projectile)
+               
+        for projectile in projectile2:
+                if projectile.rect.x  < 600 and projectile.rect.x  > 0:
+                    projectile.rect.x -= 12
+                
+                lancer1_hit_list = pygame.sprite.spritecollide(projectile, lancer1_list, False)
+                for lancer1 in lancer1_hit_list:
+                    lancer1.health -= enemybattle1.damage
+                    projectile1.remove(projectile)
+                
+
+        for cover in cover_list:
+            cover_hit_list = pygame.sprite.groupcollide(cover_list, projectile1, False, True)
+            cover_hit_list2 = pygame.sprite.groupcollide(cover_list, projectile2, False, True)
+
+        if lancer1.health <= 0:
+            lancer1.image = pygame.image.load('grave.png')
+            lancer1_alive = False
+            loser = 'The Player'
+            enemy_wins += 1
+            show_death_message = True
+        elif enemybattle1.health <= 0:
+            enemybattle1.image = pygame.image.load('grave.png')
+            lancer2_alive = False
+            loser = 'The Enemy'
+            player_wins += 1
+            show_death_message = True
+
+        if enemy_wins == 2:
+            show_death_message = False
+            winer = 'The Enemy'
+            show_win_message = True
+        elif player_wins == 2:
+            show_death_message = False
+            winer = 'The Player'
+            show_win_message = True
+        
+        lancer1.play_sound()
+        screen.fill((0,0,0))
+        screen.blit(background,(0, 0))
+        ammo_counters()
+        health_counters()
+        win_counters()
+        lancer1.draw(screen)
+        enemybattle1.draw(screen)
+        lancer1.reload()
+        enemybattle1.reload()
+        enemybattle1.pos_towards_player()
+        lancer1.handle_movement_keys()
+        projectile1.draw(screen)
+        projectile2.draw(screen)
+        cover_list.draw(screen)
+        pygame.display.flip()
+   
+        clock.tick(60)
+titlePage()
