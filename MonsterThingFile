@@ -313,7 +313,7 @@ class Projectile(pygame.sprite.Sprite):
 class Cover(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('imageedit_1_3235525764.png')
+        self.image = pygame.image.load('rubble2.png')
         self.rect = self.image.get_rect()
     def draw(self):
         surface.blit(self.image, (self.rect.x, self.rect.y))
@@ -635,7 +635,7 @@ def run():
             show_death_message = False
             winer = 'The Player'
             show_win_message = True
-        
+            
         lancer1.play_sound()
         screen.fill((0,0,0))
         screen.blit(background,(0, 0))
