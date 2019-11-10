@@ -12,6 +12,9 @@ grey = (128, 117, 113)
 font_path = 'freesansbold.ttf'
 spaceimage1 = pygame.image.load('playspace1.png')
 
+def room0(x,y):
+  screen.blit(spaceimage1, (x,y))
+
 def create_text(surface, text, size, x, y, color):
   '''draw text to screen'''
   font = pygame.font.Font(font_path, size)
@@ -26,7 +29,7 @@ class playerCharacter(pygame.sprite.Sprite):
     self.width = width
     self.height = height
     self.image = pygame.Surface([20, 20])
-    self.image.fill(green)
+    self.image.fill(blue)
     self.rect = self.image.get_rect()
     self.rect.x = 400
     self.rect.y = 550
@@ -34,7 +37,7 @@ class playerCharacter(pygame.sprite.Sprite):
     surface.blit(self.image, (self.rect.x, self.rect.y))
   def movement_keys(self):
     key = pygame.key.get_pressed()
-    dist = 1
+    dist = 2
     if key[pygame.K_s]:
       self.rect.y += dist
     elif key[pygame.K_w]:
@@ -44,37 +47,109 @@ class playerCharacter(pygame.sprite.Sprite):
     elif key[pygame.K_a]:
       self.rect.x -= dist
 
-    if self.rect.x > win_w - 10:
-      self.rect.x = win_w - 10
+    if self.rect.x < 375 and self.rect.x > 325 and self.rect.y < 475 and self.rect.y > 425:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+    if self.rect.x < 605 and self.rect.x > 555 and self.rect.y < 225 and self.rect.y > 175:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+    if self.rect.x < 525 and self.rect.x > 475 and self.rect.y < 325 and self.rect.y > 275:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
+    if self.rect.x < 225 and self.rect.x > 175 and self.rect.y < 145 and self.rect.y > 95:
+      if key[pygame.K_f]:
+        screen.fill((0,0,0))
     if self.rect.x < 0:
       self.rect.x = 0
+    if self.rect.x > win_w - 20:
+      self.rect.x = win_w - 20
     if self.rect.y < 0:
       self.rect.y = 0
-    if self.rect.y > win_h - 10:
-      self.rect.y = win_h - 10
+    if self.rect.y > win_h - 20:
+      self.rect.y = win_h - 20
 
-class barrier(pygame.sprite.Sprite):
-  def __init__(self):
+class Enemy1(pygame.sprite.Sprite):
+  def __init__(self, height, width):
     super().__init__()
+    self.width = width
+    self.height = height
     self.image = pygame.Surface([10, 10])
-    self.image.fill(blue)
+    self.image.fill(red)
     self.rect = self.image.get_rect()
+    self.rect.x = 350
+    self.rect.y = 450
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy2(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([10, 10])
+    self.image.fill(red)
+    self.rect = self.image.get_rect()
+    self.rect.x = 580
+    self.rect.y = 200
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy3(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([10, 10])
+    self.image.fill(red)
+    self.rect = self.image.get_rect()
+    self.rect.x = 500
+    self.rect.y = 300
+  def draw(self, surface):
+    surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Enemy4(pygame.sprite.Sprite):
+  def __init__(self, height, width):
+    super().__init__()
+    self.width = width
+    self.height = height
+    self.image = pygame.Surface([20, 20])
+    self.image.fill(red)
+    self.rect = self.image.get_rect()
+    self.rect.x = 200
+    self.rect.y = 120
   def draw(self, surface):
     surface.blit(self.image, (self.rect.x, self.rect.y))
 
 character = playerCharacter(20, 20)
-barrier_list = pygame.sprite.Group()
-character_list = pygame.sprite.Group()
+enemy = Enemy1(10, 10)
+enemy2 = Enemy2(10, 10)
+enemy3 = Enemy3(10, 10)
+enemy4 = Enemy4(20, 20)
+enemy_list = pygame.sprite.Group()
+character_list = pygame.sprite.GroupSingle()
 def init_character():
   character_list.add(character)
   character.image.fill(green)
   character.rect.x = 400
   character.rect.y = 550
 
-def init_barrier():
-  barrier_list.add(barrier)
-  barrier.rect.x = 350
-  barrier.rect.y = 450
+def init_enemys():
+  enemy_list.add(enemy)
+  enemy.image.fill(red)
+  enemy.rect.x = 350
+  enemy.rect.y = 450
+  enemy_list.add(enemy2)
+  enemy.image.fill(red)
+  enemy.rect.x = 580
+  enemy.rect.y = 200
+  enemy_list.add(enemy3)
+  enemy.image.fill(red)
+  enemy.rect.x = 500
+  enemy.rect.y = 300
+  enemy_list.add(enemy4)
+  enemy.image.fill(red)
+  enemy.rect.x = 200
+  enemy.rect.y = 120
 
 clock = pygame.time.Clock()
 running = False
@@ -101,29 +176,24 @@ def titlePage():
 def main_menu():
   event = pygame.event.poll()
   if event.type == pygame.KEYDOWN:
-    if event.key == pygame.K_m:
-      screen.fill((0,0,0))
-      create_text(screen, "Press B to Quit", 30, win_w/2, win_h/2.5, grey)
-      create_text(screen, "Press U to Continue", 30, win_w/2, win_h/3, grey)
-      pygame.display.update()
-    if event.key == pygame.K_u:
-      create_text(screen, "yes", 30, win_w/2, win_h/3.5, red)
     if event.key == pygame.K_b:
       pygame.quit()
       sys.exit()
-    pygame.event.clear()
   elif event.type == pygame.QUIT:
     pygame.quit()
     sys.exit()
   
 titlePage()
 while running:
-  screen.fill((0,0,0))
+  room0(0,0)
   character.draw(screen)
   character.movement_keys()
-  barrier_list.draw(screen)
+  enemy.draw(screen)
+  enemy2.draw(screen)
+  enemy3.draw(screen)
+  enemy4.draw(screen)
   main_menu()
   pygame.display.flip()
   pygame.event.clear()
-  
+    
 clock.tick(60)
